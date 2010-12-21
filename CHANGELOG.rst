@@ -1,6 +1,13 @@
 Changelog
 =========
 
+0.0.10
+-----
+
+#. Added codemirror source editor plugin
+#. Added Django Storage class compatibility
+
+
 0.0.9
 -----
 

@@ -2,8 +2,8 @@ from setuptools import setup, find_packages
 
 setup(
     name='django-ckeditor',
-    version='0.0.9',
-    description='Django admin CKEditor integration.',
+    version='0.1.0.byteorbit',
+    description='Django admin CKEditor integration. (now with codemirror and django storage api)',
     long_description = open('README.rst', 'r').read() + open('AUTHORS.rst', 'r').read() + open('CHANGELOG.rst', 'r').read(),
     author='Shaun Sephton',
     author_email='shaunsephton@gmail.com',

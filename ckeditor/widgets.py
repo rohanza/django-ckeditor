@@ -14,10 +14,11 @@ json_encode = simplejson.JSONEncoder().encode
 DEFAULT_CONFIG = {
     'skin': 'v2',
     'toolbar': 'Full',
-    'height': 291,
-    'width': 618,
+    'height': '25em',
+    'width': '90%',
     'filebrowserWindowWidth': 940,
     'filebrowserWindowHeight': 747,
+    'extraPlugins' : 'codemirror',
 }
 
 class CKEditorWidget(forms.Textarea):
@@ -29,6 +30,7 @@ class CKEditorWidget(forms.Textarea):
         try:
             js = (
                 settings.CKEDITOR_MEDIA_PREFIX + 'ckeditor/ckeditor.js',
+                settings.CKEDITOR_MEDIA_PREFIX + 'ckeditor/plugins/codemirror/js/codemirror.js',
             )
         except AttributeError:
             raise ImproperlyConfigured("django-ckeditor requires CKEDITOR_MEDIA_PREFIX setting. This setting specifies a URL prefix to the ckeditor JS and CSS media (not uploaded media). Make sure to use a trailing slash: CKEDITOR_MEDIA_PREFIX = '/media/ckeditor/'")
@@ -63,4 +65,20 @@ class CKEditorWidget(forms.Textarea):
         return mark_safe(u'''<textarea%s>%s</textarea>
         <script type="text/javascript">
             CKEDITOR.replace("%s", %s);
-        </script>''' % (flatatt(final_attrs), conditional_escape(force_unicode(value)), final_attrs['id'], json_encode(self.config)))
+
+            // CodeMirror Update when submit form in source mode
+            $(function(){
+                $('#%s').closest('form').submit(function(){
+                    for (i in CKEDITOR.instances) {
+                        CKEDITOR.instances[i].execCommand( 'mirrorSnapshot' );
+                    }
+                })
+            });
+
+        </script>''' % (flatatt(final_attrs), #textarea attributes
+                conditional_escape(force_unicode(value)), #textarea value
+                final_attrs['id'], # id for ck init
+                json_encode(self.config), #ck config
+                final_attrs['id'] # id to bind codemirror
+                )
+        )
